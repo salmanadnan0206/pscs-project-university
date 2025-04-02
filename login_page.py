@@ -7,6 +7,8 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QLineEdit, QLabel, QMessa
 from main_window import MainStudentWindow
 from queries import AllQueries
 
+# NEW IMPORT for VerificationForm
+from verification import VerificationForm
 
 class LoginForm(QMainWindow):
     def __init__(self):
@@ -25,10 +27,6 @@ class LoginForm(QMainWindow):
         font.setUnderline(True)
         login_label.setFont(font)
         self.all_queries = AllQueries()
-
-        # Set background
-        # self.set_background()
-        # self.setStyleSheet("b ackground-image: url(HU Banner.jpeg); background-position: center; background-repeat: no-repeat; background-color: transparent;")
 
         # Connect the button click to the handle_login method
         self.login_button.clicked.connect(self.handle_login)
@@ -71,15 +69,11 @@ class LoginForm(QMainWindow):
             QMessageBox.critical(self, "Error", "Wrong credentials")
             return
         if password == user_password:
-            # Call MainStudentWindow
-            # self.main_student_window = MainStudentWindow()
-            self.main_student_window = MainStudentWindow(email=email)
-            self.main_student_window.show()
+            # Instead of directly opening MainStudentWindow,
+            # we now open the VerificationForm (for MFA)
+            self.verification_window = VerificationForm(self, email)
+            self.verification_window.show()
             self.hide()
-            self.main_student_window.closed.connect(self.reopen_login)
-            self.all_queries.glob_id = self.all_queries.get_std_id_by_email(email)
-            self.all_queries.update_std_id(self.all_queries.glob_id)
-            print("self.all_queries.glob_id: " + str(self.all_queries.glob_id))
         else:
             print("Wrong credentials")
             QMessageBox.critical(self, "Error", "Wrong credentials")
