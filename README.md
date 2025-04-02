@@ -1,6 +1,6 @@
 # DBMS-Project-Fall-2023
 **=> Contributors:**
 
-- **Hussain Umer**
+- **Shayan Wasif**
 
 - **Salman Adnan**
