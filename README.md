@@ -1,4 +1,4 @@
-# DBMS-Project-Fall-2023
+# PSCS Project University
 **=> Contributors:**
 
 - **Shayan Wasif**
