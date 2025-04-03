@@ -5,8 +5,6 @@ import traceback
 from student_database import session, Student, CourseList, Course, Activity
 
 
-# main_glob_id = 20180
-
 class AllQueries:
     def __init__(self):
         self.glob_id = 20180
@@ -51,7 +49,6 @@ class AllQueries:
 
     def get_course_by_std_id_and_course_id(self, course_id):
         std_id = self.glob_id
-        # Get the course from course_list
         print()
         print()
         print(f"std_id: {std_id}\ncourse_id: {course_id}")
@@ -72,14 +69,12 @@ class AllQueries:
         print()
         print("std_id: " + str(std_id))
         print("self.glob_id: " + str(self.glob_id))
-        # Get all the courses from course_list
         course_list = session.query(Course).filter_by(std_id=std_id, is_temp=False).all()
         return course_list
 
     # def get_all_courses_by_std_id_and_course_id(self, std_id, course_id):
     def get_all_courses_by_std_id_and_course_id(self, course_id):
         std_id = self.glob_id
-        # Get all the courses from course_list
         course_list = session.query(Course).filter_by(std_id=std_id, course_id=course_id, is_temp=False).all()
         return course_list
 
@@ -87,17 +82,14 @@ class AllQueries:
     def get_all_courses_by_id_and_type(self, type):
         std_id = self.glob_id
         print(self.glob_id)
-        # Get all the courses from course_list
         course_list = session.query(Course).filter_by(std_id=std_id, type=type).all()
         print("course_list: " + str(course_list))
         print("std_id: " + str(std_id))
         print("type: " + str(type))
         return course_list
 
-    # def check_if_course_already_exist(self, course_id, section):
     def check_if_course_already_exist(self, course_id, section):
         std_id = self.glob_id
-        # Get the course from course_list
         course = session.query(Course).filter_by(std_id=std_id, course_id=course_id,
                                                  section=section).first()
         if course is None:
@@ -107,7 +99,6 @@ class AllQueries:
 
     def is_user_enrolled_in_this_course(self, course_id, section):
         std_id = self.glob_id
-        # Get the course from course_list
         course = session.query(Course).filter_by(std_id=std_id, course_id=course_id,
                                                  section=section, is_temp=False).first()
         if course is None:
@@ -119,90 +110,53 @@ class AllQueries:
         return t.hour * 3600 + t.minute * 60 + t.second
 
     def get_timings_of_all_courses_by_id(self, exclude_id, exclude_section):
-        # Get the timings of all the courses from courses for a particular student in seconds
         std_id = self.glob_id
-        course_list = session.query(Course).filter_by(std_id=std_id, is_temp=False).all()
+        course_list_query = session.query(Course).filter_by(std_id=std_id, is_temp=False).all()
         start_timings = []
         end_timings = []
         days = []
-        for course in course_list:
-            course_list = session.query(CourseList).filter_by(course_list_id=course.course_id,
-                                                              section=course.section).first()
-            # timings.append(course_list.end_time - course_list.start_time)
+
+        for course in course_list_query:
+            c_list = session.query(CourseList).filter_by(course_list_id=course.course_id,
+                                                         section=course.section).first()
 
             if course.course_id == exclude_id and course.section == exclude_section:
                 continue
 
-            end_time = course_list.end_time
-            start_time = course_list.start_time
-            day = course_list.days
-
-            print(end_time)
-            print(start_time)
-            print(day)
-
-            end_time = self.time_to_seconds(end_time)
-            start_time = self.time_to_seconds(start_time)
+            end_time = self.time_to_seconds(c_list.end_time)
+            start_time = self.time_to_seconds(c_list.start_time)
+            day = c_list.days
 
             end_timings.append(end_time)
             start_timings.append(start_time)
             days.append(day)
 
-            print(end_time)
-            print(start_time)
-            print(day)
-            print(type(end_time))
-            print(type(start_time))
-            print(type(day))
+            print(end_time, start_time, day, type(end_time), type(start_time), type(day))
         print()
-        print()
-        print()
-        print()
-
-        # # Convert the time in seconds
-        # for i in range(len(timings)):
-        #     timings[i] = timings[i].seconds
 
         return start_timings, end_timings, days
 
     def get_days_timings_of_all_courses_by_id_temp_false(self):
-        # Get the timings of all the courses from courses for a particular student in seconds
         std_id = self.glob_id
-        course_list = session.query(Course).filter_by(std_id=std_id).all()
+        course_list_query = session.query(Course).filter_by(std_id=std_id).all()
         days = []
         start_timings = []
         end_timings = []
-        for course in course_list:
-            course_list = session.query(CourseList).filter_by(course_list_id=course.course_id,
-                                                              section=course.section).first()
-            # timings.append(course_list.end_time - course_list.start_time)
-            end_time = course_list.end_time
-            start_time = course_list.start_time
-            day = course_list.days
 
-            print(end_time)
-            print(start_time)
-            print(day)
+        for course in course_list_query:
+            c_list = session.query(CourseList).filter_by(course_list_id=course.course_id,
+                                                         section=course.section).first()
 
-            end_time = self.time_to_seconds(end_time)
-            start_time = self.time_to_seconds(start_time)
+            end_time = self.time_to_seconds(c_list.end_time)
+            start_time = self.time_to_seconds(c_list.start_time)
+            day = c_list.days
 
             end_timings.append(end_time)
             start_timings.append(start_time)
             days.append(day)
 
-            print(end_time)
-            print(start_time)
-            print(day)
-            print(type(end_time))
-            print(type(start_time))
-            print(type(day))
+            print(end_time, start_time, day, type(end_time), type(start_time), type(day))
         print()
-        print()
-
-        # # Convert the time in seconds
-        # for i in range(len(timings)):
-        #     timings[i] = timings[i].seconds
 
         return start_timings, end_timings, days
 
@@ -212,28 +166,23 @@ class AllQueries:
     # def add_course(self, std_id, course_list_id, section):
     def add_course(self, course_list_id, section):
         std_id = self.glob_id
-        # Get the course from course_list
         course = session.query(CourseList).filter_by(course_list_id=course_list_id).first()
         print("course.section: " + course.section)
 
-        # is_already_added = self.check_if_course_already_exist(std_id, course_list_id, section)
         is_already_added = self.check_if_course_already_exist(course_list_id, section)
         if is_already_added:
             print("Returning false")
             return False
 
-        # Create a new course object
         new_course = Course(std_id=std_id, section=section, course_id=course_list_id,
                             is_temp=True, type="Add")
-        # Add the course to the database
+
         session.add(new_course)
-        # Commit the changes
         try:
             session.commit()
         except:
             print("Error: " + str(sys.exc_info()[0]))
             print(traceback.format_exc())
-            # undo the changes
             session.rollback()
             return False
         return True
@@ -241,23 +190,15 @@ class AllQueries:
     # def remove_course(self, std_id, course_id, section):
     def remove_course(self, course_id, section):
         std_id = self.glob_id
-        # Get the course from course_list
         print("Came in here")
         course = session.query(Course).filter_by(std_id=std_id, course_id=course_id, section=section).first()
-        # Delete the course from the database
-        print()
-        print()
-        print(" std_id: " + str(std_id)
-              + " course_id: " + str(course_id)
-              + " section: " + str(section))
+        print(f" std_id: {std_id} course_id: {course_id} section: {section}")
         session.delete(course)
-        # Commit the changes
         try:
             session.commit()
         except:
             print("Error: " + str(sys.exc_info()[0]))
             print(traceback.format_exc())
-            # undo the changes
             session.rollback()
             return False
         return True
@@ -265,21 +206,15 @@ class AllQueries:
     # def is_temp_false_remove_type_add(self, std_id, course_type):
     def is_temp_false_remove_type_add(self, course_type):
         std_id = self.glob_id
-        # Get the course from course_list
-        course = session.query(Course).filter_by(std_id=std_id, type=course_type).all()
-        # course.is_temp = False
-        # course.type = None
-        for c in course:
+        course_objs = session.query(Course).filter_by(std_id=std_id, type=course_type).all()
+        for c in course_objs:
             c.is_temp = False
             c.type = None
-
-        # Commit the changes
         try:
             session.commit()
         except:
             print("Error: " + str(sys.exc_info()[0]))
             print(traceback.format_exc())
-            # undo the changes
             session.rollback()
             return False
         return True
@@ -287,27 +222,20 @@ class AllQueries:
     # def is_temp_false_single_course(self, std_id, course_id, section):
     def is_temp_false_single_course(self, course_id, section):
         std_id = self.glob_id
-        # Get the course from course_list
         course = session.query(Course).filter_by(std_id=std_id, course_id=course_id,
                                                  section=section).first()
-        # course.is_temp = False
-        # course.type = None
         course.is_temp = False
         course.type = None
-
-        # Commit the changes
         try:
             session.commit()
         except:
             print("Error: " + str(sys.exc_info()[0]))
             print(traceback.format_exc())
-            # undo the changes
             session.rollback()
             return False
         return True
 
     def update_current_capacity(self, course_id, section, add_or_subtract):
-        # Get the course from course_list
         course = session.query(CourseList).filter_by(course_list_id=course_id,
                                                      section=section).first()
         if add_or_subtract == "Add":
@@ -322,14 +250,11 @@ class AllQueries:
         else:
             print("Error: current_capacity is negative")
             return False
-
-        # Commit the changes
         try:
             session.commit()
         except:
             print("Error: " + str(sys.exc_info()[0]))
             print(traceback.format_exc())
-            # undo the changes
             session.rollback()
             return False
         return True
@@ -337,22 +262,13 @@ class AllQueries:
     # def swap_courses(self, std_id, course_id, section, course_id_enrolled, section_enrolled):
     def swap_courses(self, course_id, section, course_id_enrolled, section_enrolled):
         std_id = self.glob_id
-        # Remove the enrolled course
         print(f"std_id: {std_id}\ncourse_id: {course_id}\nsection: {section}")
-        # self.remove_course(std_id, course_id_enrolled, section_enrolled)
         self.remove_course(course_id_enrolled, section_enrolled)
-
-        # Add the course
         try:
-            # does_it_work = self.add_course(20180, int(course_id), section)
-            # does_it_work = self.add_course(std_id, int(course_id), section)
             does_it_work = self.add_course(int(course_id), section)
             if not does_it_work:
-                print()
-                print()
                 print("Course could not be added")
                 return False
-            # self.is_temp_false_single_course(std_id, course_id, section)
             self.is_temp_false_single_course(course_id, section)
         except:
             print("Error: " + str(sys.exc_info()[0]))
@@ -363,66 +279,128 @@ class AllQueries:
 
     def get_activity_by_std_id(self):
         std_id = self.glob_id
-        # Get the course from course_list
         activity = session.query(Activity).filter_by(std_id=std_id).all()
         return activity
 
     def add_data_to_activity_log(self, std_id, activity_type, course_id=None, section=None):
-        # Get the course from course_list
-        course = session.query(CourseList).filter_by(course_list_id=course_id).first()
-        # Create a new course object
-        new_activity = Activity(std_id=std_id, course_id=str(course_id), activity_type=activity_type,
-                                activity_date=datetime.datetime.now().date(),
-                                activity_time=datetime.datetime.now().time(),
-                                course_section=section)
-        # Add the course to the database
+        course = None
+        if course_id is not None:
+            course = session.query(CourseList).filter_by(course_list_id=course_id).first()
+
+        new_activity = Activity(
+            std_id=std_id,
+            course_id=str(course_id) if course_id else None,
+            activity_type=activity_type,
+            activity_date=datetime.datetime.now().date(),
+            activity_time=datetime.datetime.now().time(),
+            course_section=section
+        )
         session.add(new_activity)
-        # Commit the changes
         try:
             session.commit()
         except:
             print("Error: " + str(sys.exc_info()[0]))
             print(traceback.format_exc())
-            # undo the changes
             session.rollback()
             return False
         return True
 
     def delete_all_data_activity_log(self):
-        # Get the course from course_list
         activity = session.query(Activity).all()
-        # Create a new course object
         for a in activity:
             session.delete(a)
-        # Add the course to the database
-        # Commit the changes
         try:
             session.commit()
         except:
             print("Error: " + str(sys.exc_info()[0]))
             print(traceback.format_exc())
-            # undo the changes
             session.rollback()
             return False
         return True
 
     def delete_everything_in_course_table(self):
-        # Get the course from course_list
-        course = session.query(Course).all()
-        # Create a new course object
-        for c in course:
+        course_objs = session.query(Course).all()
+        for c in course_objs:
             session.delete(c)
-        # Add the course to the database
-        # Commit the changes
         try:
             session.commit()
         except:
             print("Error: " + str(sys.exc_info()[0]))
             print(traceback.format_exc())
-            # undo the changes
             session.rollback()
             return False
         return True
+
+    #
+    # -------------- NEW METHOD FOR ATTENDANCE --------------
+    #
+    def insert_attendance_activity(self, std_id, day_val, date_val, status):
+        """
+        Inserts a new row in 'Activity' specifically for attendance.
+        - activity_type = 'Attendance'
+        - course_id = None (no real course)
+        - Put day/date/status in course_section so it’s visible in logs
+        """
+        # example: "2025-03-01 (Monday) => Present"
+        attendance_info = f"{date_val} ({day_val}) => {status}"
+
+        new_activity = Activity(
+            std_id=std_id,
+            course_id=None,  # no actual course
+            activity_type="Attendance",
+            activity_date=datetime.datetime.now().date(),
+            activity_time=datetime.datetime.now().time(),
+            course_section=attendance_info
+        )
+        session.add(new_activity)
+        try:
+            session.commit()
+        except:
+            print("Error (insert_attendance_activity):", sys.exc_info()[0])
+            print(traceback.format_exc())
+            session.rollback()
+            return False
+        return True
+    
+    def insert_activity(self, std_id, activity_type, description, date_val, time_val):
+        """
+        Insert a new row in the Activity table.
+        - std_id: student ID
+        - activity_type: e.g. "Attendance"
+        - description: a string we store in 'course_section'
+        - date_val: string "YYYY-MM-DD"
+        - time_val: string "HH:MM:SS"
+        """
+        try:
+            # Convert date_val/time_val from strings to Python date/time objects
+            activity_date_obj = datetime.datetime.strptime(date_val, "%Y-%m-%d").date()
+            activity_time_obj = datetime.datetime.strptime(time_val, "%H:%M:%S").time()
+        except ValueError:
+            # fallback if parsing fails, just use "now"
+            activity_date_obj = datetime.datetime.now().date()
+            activity_time_obj = datetime.datetime.now().time()
+
+        new_activity = Activity(
+            std_id=std_id,
+            course_id=None,               # no specific course for attendance
+            activity_type=activity_type,  # e.g. "Attendance"
+            activity_date=activity_date_obj,
+            activity_time=activity_time_obj,
+            # Store the attendance description in course_section
+            course_section=description  
+        )
+
+        session.add(new_activity)
+        try:
+            session.commit()
+            return True
+        except:
+            print("Error in insert_activity:")
+            print(sys.exc_info()[0])
+            print(traceback.format_exc())
+            session.rollback()
+            return False
+
 
 
 if __name__ == "__main__":

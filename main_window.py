@@ -9,6 +9,7 @@ from queries import AllQueries
 from view_schedule import ViewScheduleWindow
 from swap_courses import SwapCoursesWindow
 from activity_log import ActivityLogWindow
+from attendance import AttendanceForm
 
 
 class MainStudentWindow(QMainWindow):
@@ -25,6 +26,9 @@ class MainStudentWindow(QMainWindow):
             self.email = "alice20180@st.habib.edu.pk"
         else:
             self.email = email
+        
+        # Define std_email and std_id so we can pass them around
+        self.std_id = self.get_student_id_by_email(self.email)
 
         # Find the label by its name
         enrollment_label = self.findChild(QLabel, 'label')
@@ -39,6 +43,7 @@ class MainStudentWindow(QMainWindow):
         enrollment_label.setFont(font)
 
         # Connect the button clicks to their respective methods
+        self.view_attendance.clicked.connect(self.handle_view_attendance)
         self.add_courses_button.clicked.connect(self.add_courses)
         self.drop_courses_button.clicked.connect(self.drop_courses)
         self.view_schedule_button.clicked.connect(self.view_schedule)
@@ -48,6 +53,20 @@ class MainStudentWindow(QMainWindow):
 
         # app.aboutToQuit.connect(self.close_event)
 
+    def handle_view_attendance(self):
+        # Open the AttendanceForm
+        self.attendance_window = AttendanceForm(
+            parent=self,
+            std_email=self.email,
+            std_id=self.std_id
+        )
+        self.attendance_window.show()
+
+    def get_student_id_by_email(self, email):
+        # Example logic or call to queries:
+        all_q = AllQueries()
+        return all_q.get_std_id_by_email(email)
+    
     def swap_course(self):
         print("Swap Course clicked")
         self.swap_courses_window = SwapCoursesWindow(email=self.email)

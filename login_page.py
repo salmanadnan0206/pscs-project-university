@@ -6,8 +6,6 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QLineEdit, QLabel, QMessa
 
 from main_window import MainStudentWindow
 from queries import AllQueries
-
-# NEW IMPORT for VerificationForm
 from verification import VerificationForm
 
 class LoginForm(QMainWindow):
