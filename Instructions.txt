@@ -1,9 +1,0 @@
-You can run the program from the login_page.py file.
-Here are some of the credentials you can use to login:
-```bob123@st.habib.edu.pk``` and ```bob123```
-```ronaldo273@st.habib.edu.pk``` and ```ronaldo123```
-```babar173@st.habib.edu.pk``` and ```babar123```
-
-
-We have used SQLAlchemy to create the database and the tables.
-Since SQLAlchemy cannot make an ERD diagram, you can find the ERD diagram in the Asset folder.
